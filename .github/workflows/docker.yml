@@ -14,7 +14,7 @@ env:
 
 jobs:
   build-and-push:
-    runs-on: [self-hosted, linux, x64,]
+    runs-on: [self-hosted, linux, x64]
     permissions:
       contents: read
       packages: write
@@ -33,7 +33,7 @@ jobs:
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: ${{ github.repository }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
           tag-sha: true
           
       - name: Log in to Container Registry
@@ -49,8 +49,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          pull: true
           tags: ${{ env.REGISTRY }}/${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
+          labels: ${{ env.REGISTRY }}/${{ steps.docker_meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
